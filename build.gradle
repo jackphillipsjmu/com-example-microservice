@@ -1,0 +1,117 @@
+buildscript {
+    ext {
+        spring_boot_version = '2.0.0.RELEASE'
+        gradle_docker_version = '1.2'
+        json_schema_pojo_version = '0.4.35'
+        springfox_version = '2.9.2'
+        swagger_annotations_version = '1.5.21'
+        h2_version = '1.4.197'
+        liquibase_version = '3.5.3'
+        jjwt_version = '0.9.1'
+        junit_version = '4.12'
+        mockito_version = '2.21.0'
+        jpa_version = '2.2'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version")
+        classpath("se.transmode.gradle:gradle-docker:$gradle_docker_version")
+        classpath("org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:$json_schema_pojo_version")
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2'
+        classpath(files("libs/com-jsonschema-custom-0.0.1.jar"))
+    }
+}
+
+// Plugins
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'docker'
+apply plugin: 'jsonschema2pojo'
+apply plugin: 'jacoco'
+apply plugin: 'idea'
+apply plugin: 'org.asciidoctor.convert'
+
+group 'com.example.microservice'
+version '0.0.1'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java.srcDir file("$project.buildDir}/generated-sources/js2p")
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.example.microservice.Application'
+    }
+    version = version
+    from('src/main/java') {
+        include '**/*.java'
+    }
+    from {
+        configurations.compile.collect{it.isDirectory() ? it : zipTree(it)}
+    }
+}
+
+dependencies {
+    // Spring
+    compile "org.springframework.boot:spring-boot-starter-data-jpa:$spring_boot_version"
+    compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
+
+    // In memory H2 DB
+    compile("com.h2database:h2:$h2_version")
+
+//    springfox_version = '2.6.1'
+//    swagger_annotations_version = '1.5.
+    // Documentation Dependencies
+    compile("io.springfox:springfox-swagger2:$springfox_version")
+    compile("io.springfox:springfox-swagger-ui:$springfox_version")
+
+    // Needed for JSON to POJO, utilizes Apache commons lib
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+
+    // Test Dependencies
+    // Spring
+    testCompile("org.springframework.boot:spring-boot-starter-test:$spring_boot_version")
+    // Mockito
+    testCompile("org.mockito:mockito-core:$mockito_version")    
+    // JUnit
+    testCompile("junit:junit:$junit_version")
+}
+
+// Automated POJO Generation tool from JSON
+jsonSchema2Pojo {
+    sourceType = 'jsonschema'
+    source = files("${sourceSets.main.output.resourcesDir}/schema")
+    targetDirectory = file("${project.buildDir}/generated-sources/js2p")
+    targetPackage = 'com.example.microservice.api'
+    includeJsr303Annotations = true
+    serializable = true
+    customAnnotator = 'com.jsonschema.custom.automater.JpaSpringfoxAnnotator'
+    includeAdditionalProperties = false
+}
+
+// Jacoco Test Reports
+jacoco {
+    toolVersion = "0.7.9"
+    reportsDir = file("${buildDir}/reports/jacoco")
+}
+
+// Sets up test report outputs from Jacoco
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination = "${buildDir}/reports/jacocoHtml"
+    }
+}
