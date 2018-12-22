@@ -3,16 +3,11 @@ package com.example.microservice.service.audit;
 import com.example.microservice.api.ControllerAuditLog;
 import com.example.microservice.audit.repository.ControllerAuditRepository;
 import com.example.microservice.exception.NotFoundException;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Class operates on Audit Log data and performs service operations.
