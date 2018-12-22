@@ -1,10 +1,15 @@
 # Example Microservice Written in Spring Boot
-Current functionality includes:
+### Current functionality Includes
 - Automated POJO generation with Swagger and JPA related annotations.
 - Logging of request/responses to controller endpoints using web filter.
 - Example controller, service and repository classes.
 - [Swagger UI](http:localhost:8080/swagger-ui.html) to run REST endpoints from your browser.
 
+### Future Additions
+- JUnit and Mockito tests.
+- Example Cucumber Acceptance Tests.
+- Automated documentation using AsciiDoctor and Swagger that are served up to static HTML page.
+- Configurable Security (Basic, JWT, OAuth, etc.) 
 
 ## Setup
 - Clone project to your local environment `git clone git@github.com:jackphillipsjmu/com-example-microservice.git`
