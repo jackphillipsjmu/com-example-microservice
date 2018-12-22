@@ -57,7 +57,6 @@ public class AuditLogFilter extends OncePerRequestFilter {
     // Logger which can be altered to log all request/responses to console
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-
     // Set of URI patterns to log
     @Value("${audit.log.inclusions:#{null}}")
     private Set<String> inclusionSet;
